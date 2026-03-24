@@ -121,7 +121,7 @@ public class PacienteServiceImpl implements PacienteService {
 	
 	private void validarTelefonoUnico(String telefono) {
 		log.info("Validando teléfono único...");
-		if(pacienteRepository.existsByEmailAndEstadoRegistro(telefono, EstadoRegistro.ACTIVO)) {
+		if(pacienteRepository.existsByTelefonoAndEstadoRegistro(telefono, EstadoRegistro.ACTIVO)) {
 			throw new IllegalArgumentException("Ya existe un Paciente registrado con el teléfiono: " + telefono);
 		}
 	}
