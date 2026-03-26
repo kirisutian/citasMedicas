@@ -4,9 +4,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.christian.commons.configuration.FeignClientConfig;
 import com.christian.commons.dto.MedicoResponse;
 
-@FeignClient(name = "medicos-msv")
+@FeignClient(name = "medicos-msv", configuration = FeignClientConfig.class)
 public interface MedicoClient {
 	
 	@GetMapping("/{id}")
