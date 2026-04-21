@@ -41,7 +41,7 @@ public enum EspecialidadMedico {
 	public static EspecialidadMedico obtenerEspecialidadPorDescripcion(String descripcion) {
         for (EspecialidadMedico e : values()) {
         	String descEspecialidad = StringCustomUtils.quitarAcentos(e.descripcion);
-            if (descEspecialidad.equalsIgnoreCase(descripcion)) {
+            if (descEspecialidad.equalsIgnoreCase(StringCustomUtils.quitarAcentos(descripcion))) {
                 return e;
             }
         }
