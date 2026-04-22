@@ -5,5 +5,6 @@ import com.christian.citas.dto.CitaResponse;
 import com.christian.commons.services.CrudService;
 
 public interface CitaService extends CrudService<CitaRequest, CitaResponse> {
-
+	
+	void actualizarEstadoCita(Long idCita, Long idEstadoCita);
 }

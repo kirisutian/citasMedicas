@@ -65,7 +65,7 @@ public class CitaMapper implements CommonMapper<CitaRequest, CitaResponse, Cita>
 				paciente.peso() + " kg.",
 				paciente.estatura() + " m.",
 				String.join(" ",
-						paciente.imc().toString(),
+						Math.round(paciente.imc() * 100.0) / 100.0 + "",
 						this.clasificacionIMC(paciente.imc())),
 				paciente.telefono()
 		);
