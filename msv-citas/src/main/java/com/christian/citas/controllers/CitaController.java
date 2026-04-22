@@ -2,6 +2,7 @@ package com.christian.citas.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,22 @@ public class CitaController extends CommonController<CitaRequest, CitaResponse, 
 			@PathVariable @Positive(message = "El idEstado debe ser positivo") Long idEstado) {
 		
 		service.actualizarEstadoCita(idCita, idEstado);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/id-medico/{idMedico}/citas-asignadas")
+	public ResponseEntity<Void> medicoTieneCitasAsignadas(
+			@PathVariable @Positive(message = "El idMedico debe ser positivo") Long idMedico) {
+		
+		service.medicoTieneCitasAsignadas(idMedico);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping("/id-paciente/{idPaciente}/citas-asignadas")
+	public ResponseEntity<Void> pacienteTieneCitasAsignadas(
+			@PathVariable @Positive(message = "El idPaciente debe ser positivo") Long idPaciente) {
+		
+		service.pacienteTieneCitasAsignadas(idPaciente);
 		return ResponseEntity.noContent().build();
 	}
 

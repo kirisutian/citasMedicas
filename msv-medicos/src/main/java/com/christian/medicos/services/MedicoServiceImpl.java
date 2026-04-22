@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.christian.commons.clients.CitaClient;
 import com.christian.commons.dto.MedicoRequest;
 import com.christian.commons.dto.MedicoResponse;
 import com.christian.commons.enums.DisponibilidadMedico;
@@ -28,6 +29,8 @@ public class MedicoServiceImpl implements MedicoService {
 	
 	private final MedicoMapper medicoMapper;
 	
+	private final CitaClient citaClient;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<MedicoResponse> listar() {
@@ -40,6 +43,14 @@ public class MedicoServiceImpl implements MedicoService {
 	@Transactional(readOnly = true)
 	public MedicoResponse obtenerPorId(Long id) {
 		return medicoMapper.entidadAResponse(obtenerMedicoActivoOException(id));
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public MedicoResponse obtenerMedicoPorIdSinEstado(Long id) {
+		log.info("Buscando Médico sin estado con id: {}", id);
+		return medicoMapper.entidadAResponse(medicoRepository.findById(id).orElseThrow(() ->
+				new RecursoNoEncontradoException("Médico sin estado no encontrado con el id: " + id)));
 	}
 
 	@Override
@@ -70,6 +81,8 @@ public class MedicoServiceImpl implements MedicoService {
 		Medico medico = obtenerMedicoActivoOException(id);
 		log.info("Actualizando Médico con id: {}", id);
 		
+		medicoTieneCitasAsignadas(id);
+		
 		validarCambiosUnicos(request, medico);
 		
 		medico.actualizar(
@@ -92,15 +105,10 @@ public class MedicoServiceImpl implements MedicoService {
 		Medico medico = obtenerMedicoActivoOException(id);
 		log.info("Eliminando Médico con id: {}", id);
 		
+		medicoTieneCitasAsignadas(id);
+		
 		medico.eliminar();
 		log.info("Médico con id {} ha sido eliminado", id);
-	}
-
-	@Override
-	public MedicoResponse obtenerMedicoPorIdSinEstado(Long id) {
-		log.info("Buscando Médico sin estado con id: {}", id);
-		return medicoMapper.entidadAResponse(medicoRepository.findById(id).orElseThrow(() ->
-				new RecursoNoEncontradoException("Médico sin estado no encontrado con el id: " + id)));
 	}
 
 	@Override
@@ -179,6 +187,10 @@ public class MedicoServiceImpl implements MedicoService {
                     "Ya existe un Médico registrado con la cédula: " +
                             request.cedulaProfesional());
         }
+    }
+    
+    private void medicoTieneCitasAsignadas(Long id) {
+    	citaClient.medicoTieneCitasAsignadas(id);
     }
 
 }

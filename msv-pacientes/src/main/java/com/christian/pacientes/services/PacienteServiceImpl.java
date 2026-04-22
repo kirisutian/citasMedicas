@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.christian.commons.clients.CitaClient;
 import com.christian.commons.dto.PacienteRequest;
 import com.christian.commons.dto.PacienteResponse;
 import com.christian.commons.enums.EstadoRegistro;
@@ -25,6 +26,8 @@ public class PacienteServiceImpl implements PacienteService{
 	private final PacienteRepository pacienteRepository;
 	
 	private final PacienteMapper pacienteMapper;
+	
+	private final CitaClient citaClient;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -70,6 +73,8 @@ public class PacienteServiceImpl implements PacienteService{
 	public PacienteResponse actualizar(PacienteRequest request, Long id) {
 		Paciente paciente = obtenerPacienteActivoOException(id);
 		
+		pacienteTieneCitasAsignadas(id);
+		
 		log.info("Actualizando Paciente: {}", paciente.getNombre());
 		
 		validarCambiosUnicos(request, id);
@@ -97,7 +102,10 @@ public class PacienteServiceImpl implements PacienteService{
 		Paciente paciente = obtenerPacienteActivoOException(id);
 		
 		log.info("Eliminando Paciente con id: {}", id);
-		paciente.setEstadoRegistro(EstadoRegistro.ELIMINADO);
+		
+		pacienteTieneCitasAsignadas(id);
+		
+		paciente.eliminar();
 		
 		log.info("Paciente con id: {} ha sido marcado como eliminado", id);
 	}
@@ -134,5 +142,9 @@ public class PacienteServiceImpl implements PacienteService{
 			throw new IllegalArgumentException("Ya existe un Paciente registrado con el teléfono: " + request.telefono());
 		}
 	}
+	
+	private void pacienteTieneCitasAsignadas(Long id) {
+    	citaClient.pacienteTieneCitasAsignadas(id);
+    }
 
 }

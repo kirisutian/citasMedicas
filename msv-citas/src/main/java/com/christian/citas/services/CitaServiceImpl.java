@@ -15,6 +15,7 @@ import com.christian.commons.clients.PacienteClient;
 import com.christian.commons.dto.MedicoResponse;
 import com.christian.commons.dto.PacienteResponse;
 import com.christian.commons.enums.EstadoRegistro;
+import com.christian.commons.exceptions.EntidadRelacionadaException;
 import com.christian.commons.exceptions.RecursoNoEncontradoException;
 
 import lombok.AllArgsConstructor;
@@ -33,6 +34,8 @@ public class CitaServiceImpl implements CitaService {
 	private final MedicoClient medicoClient;
 	
 	private final PacienteClient pacienteClient;
+	
+	private final List<EstadoCita> ESTADOS_INVALIDOS_MODIFICACION = List.of(EstadoCita.CONFIRMADA, EstadoCita.EN_CURSO);
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -57,6 +60,42 @@ public class CitaServiceImpl implements CitaService {
 				cita,
 				obtenerPacienteSinEstado(cita.getIdPaciente()),
 				obtenerMedicoSinEstado(cita.getIdMedico()));
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public void medicoTieneCitasAsignadas(Long idMedico) {
+		log.info("Validando citas asignadas con estados {} para el médico con id: {}",
+				ESTADOS_INVALIDOS_MODIFICACION, idMedico);
+		
+		boolean tieneCitas = citaRepository
+				.existsByIdMedicoAndEstadoRegistroAndEstadoCitaIn(
+						idMedico,
+						EstadoRegistro.ACTIVO,
+						ESTADOS_INVALIDOS_MODIFICACION);
+		
+		if (tieneCitas)
+			throw new EntidadRelacionadaException(
+					"No se puede modificar el médico ya que tiene citas con estados: "
+							+ ESTADOS_INVALIDOS_MODIFICACION);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public void pacienteTieneCitasAsignadas(Long idPaciente) {
+		log.info("Validando citas asignadas con estados {} para el paciente con id: {}",
+				ESTADOS_INVALIDOS_MODIFICACION, idPaciente);
+		
+		boolean tieneCitas = citaRepository
+				.existsByIdPacienteAndEstadoRegistroAndEstadoCitaIn(
+						idPaciente,
+						EstadoRegistro.ACTIVO,
+						ESTADOS_INVALIDOS_MODIFICACION);
+		
+		if (tieneCitas)
+			throw new EntidadRelacionadaException(
+					"No se puede modificar el paciente ya que tiene citas con estados: "
+							+ ESTADOS_INVALIDOS_MODIFICACION);
 	}
 
 	@Override

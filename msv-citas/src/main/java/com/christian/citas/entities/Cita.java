@@ -70,6 +70,16 @@ public class Cita {
 	}
     
     public void actualizarEstadoCita(EstadoCita nuevoEstadoCita) {
+    	
+    	if (!this.estadoCita.puedeCambiar().contains(nuevoEstadoCita)) {
+    		throw new IllegalStateException("La cita con estado " + this.estadoCita +
+					" solo puede cambiar a " + this.estadoCita.puedeCambiar());
+		}
+    	
+    	this.estadoCita = nuevoEstadoCita;
+    }
+    
+    /*public void actualizarEstadoCita(EstadoCita nuevoEstadoCita) {
     	switch(this.estadoCita) {
     	
     		case PENDIENTE -> {
@@ -105,7 +115,7 @@ public class Cita {
     		}
     	}
     	this.estadoCita = nuevoEstadoCita;
-    }
+    }*/
     
     private void puedeEliminar() {
     	if (this.estadoCita == (EstadoCita.CONFIRMADA) ||

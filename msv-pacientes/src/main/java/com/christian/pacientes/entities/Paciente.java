@@ -87,6 +87,10 @@ public class Paciente {
 		this.direccion = direccion;
 		this.numExpediente = this.generarNumExpediente();
 	}
+	
+	public void eliminar() {
+		this.estadoRegistro = EstadoRegistro.ELIMINADO;
+	}
     
     public double calcularImc() {
     	return this.peso / (this.estatura * this.estatura);
