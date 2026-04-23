@@ -16,14 +16,14 @@ public enum EstadoCita {
 	PENDIENTE(1L, "Pendiente de confirmar") {
 		@Override
 		public Set<EstadoCita> puedeCambiar() {
-			return EnumSet.of(EN_CURSO, CANCELADA);
+			return EnumSet.of(CONFIRMADA, CANCELADA);
 		}
 	},
 	
     CONFIRMADA(2L, "Confirmada por el paciente") {
 		@Override
 		public Set<EstadoCita> puedeCambiar() {
-			return EnumSet.of(FINALIZADA, CANCELADA);
+			return EnumSet.of(EN_CURSO, CANCELADA);
 		}
 	},
     

@@ -3,6 +3,7 @@ package com.christian.commons.clients;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import com.christian.commons.dto.MedicoResponse;
 
@@ -14,4 +15,9 @@ public interface MedicoClient {
 
 	@GetMapping("/id-medico/{id}")
 	MedicoResponse obtenerMedicoPorIdSinEstado(@PathVariable Long id);
+	
+	@PutMapping("/{idMedico}/disponibilidad/{idDisponibilidad}")
+	void actualizarDisponibilidadMedico(
+			@PathVariable Long idMedico,
+			@PathVariable Long idDisponibilidad);
 }
