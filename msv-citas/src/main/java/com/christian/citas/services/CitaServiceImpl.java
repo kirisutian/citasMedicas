@@ -36,10 +36,7 @@ public class CitaServiceImpl implements CitaService {
 	
 	private final PacienteClient pacienteClient;
 	
-	private final List<EstadoCita> ESTADOS_INVALIDOS_MODIFICACION =
-			List.of(EstadoCita.CONFIRMADA, EstadoCita.EN_CURSO);
-	
-	private final List<EstadoCita> ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS=
+	private final List<EstadoCita> ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS =
 			List.of(EstadoCita.PENDIENTE, EstadoCita.CONFIRMADA, EstadoCita.EN_CURSO);
 	
 	@Override
@@ -71,36 +68,36 @@ public class CitaServiceImpl implements CitaService {
 	@Transactional(readOnly = true)
 	public void medicoTieneCitasAsignadas(Long idMedico) {
 		log.info("Validando citas asignadas con estados {} para el médico con id: {}",
-				ESTADOS_INVALIDOS_MODIFICACION, idMedico);
+				ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS, idMedico);
 		
 		boolean tieneCitas = citaRepository
 				.existsByIdMedicoAndEstadoRegistroAndEstadoCitaIn(
 						idMedico,
 						EstadoRegistro.ACTIVO,
-						ESTADOS_INVALIDOS_MODIFICACION);
+						ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS);
 		
 		if (tieneCitas)
 			throw new EntidadRelacionadaException(
 					"No se puede modificar el médico ya que tiene citas con estados: "
-							+ ESTADOS_INVALIDOS_MODIFICACION);
+							+ ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public void pacienteTieneCitasAsignadas(Long idPaciente) {
 		log.info("Validando citas asignadas con estados {} para el paciente con id: {}",
-				ESTADOS_INVALIDOS_MODIFICACION, idPaciente);
+				ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS, idPaciente);
 		
 		boolean tieneCitas = citaRepository
 				.existsByIdPacienteAndEstadoRegistroAndEstadoCitaIn(
 						idPaciente,
 						EstadoRegistro.ACTIVO,
-						ESTADOS_INVALIDOS_MODIFICACION);
+						ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS);
 		
 		if (tieneCitas)
 			throw new EntidadRelacionadaException(
 					"No se puede modificar el paciente ya que tiene citas con estados: "
-							+ ESTADOS_INVALIDOS_MODIFICACION);
+							+ ESTADOS_INVALIDOS_REGISTROS_ASIGNADOS);
 	}
 
 	@Override
